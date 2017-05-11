@@ -1,0 +1,19 @@
+{
+  "name": "presentationenginejs",
+  "version": "5.3.6",
+  "license": {
+    "type": "Apache-2.0",
+    "url": "https://opensource.org/licenses/apache2.0.php"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssssssssssss/prensentationenginejs.git"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib --presets=es2017 && cat lib/*.js > dist/engine.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.0.0",
+    "babel-preset-es2017": "^6.24.1"
+  }
+}
