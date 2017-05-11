@@ -66,7 +66,7 @@ has.add = function( name, test )
     has.cache[name] = test;
 };
 
-function configureDetectionTools()
+export default function configureDetectionTools()
 {
     if( !navigator )
     {

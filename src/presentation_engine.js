@@ -63,6 +63,7 @@
  *
  */
 
+import configureDetectionTools from 'dojo_sniffer.js'
 
 window.onload = init;
 
