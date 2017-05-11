@@ -10,11 +10,15 @@
     "url": "https://github.com/ssssssssssss/prensentationenginejs.git"
   },
   "scripts": {
-    "build": "babel src --out-dir lib --presets=es2017 && cat lib/*.js > dist/engine.js",
-    "test": "babel src --out-dir lib --presets=es2017"
+    "build": "browserify -t [ babelify --presets [ env ] ]  src/presentation_engine.js -g uglifyify > dist/engine.min.js",
+    "test": "babel src --out-dir lib --presets=env"
   },
   "devDependencies": {
     "babel-cli": "^6.0.0",
-    "babel-preset-es2017": "^6.24.1"
+    "babel-preset-env": "^1.4.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.3.0",
+    "uglify": "^0.1.5",
+    "uglifyify": "^3.0.4"
   }
 }

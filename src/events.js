@@ -59,7 +59,7 @@
  *  @returns   Array array containing all the elements of the tree with root
  *             'node' that own the property 'name'
  */
-function getElementsByProperty( node, name )
+export function getElementsByProperty( node, name )
 {
     var elements = [];
 
@@ -124,7 +124,7 @@ function onKeyPress( aEvt )
  *
  *  @returns Object default key code dictionary
  */
-function getDefaultKeyCodeDictionary()
+export function getDefaultKeyCodeDictionary()
 {
     var keyCodeDict = {};
 
@@ -182,7 +182,7 @@ function getDefaultKeyCodeDictionary()
  *
  *  @returns Object char code dictionary
  */
-function getDefaultCharCodeDictionary()
+export function getDefaultCharCodeDictionary()
 {
     var charCodeDict = {};
 
@@ -372,7 +372,7 @@ function mouseClickHelper( aEvt )
  *
  *  @returns Object default mouse handler dictionary
  */
-function getDefaultMouseHandlerDictionary()
+export function getDefaultMouseHandlerDictionary()
 {
     var mouseHandlerDict = {};
 
@@ -406,7 +406,7 @@ function getDefaultMouseHandlerDictionary()
  *  INDEX_OFFSET = -1
  *  indexSetPageSlide(activeSlide);
  */
-function indexSetPageSlide( nIndex )
+export function indexSetPageSlide( nIndex )
 {
     var aMetaSlideSet = theMetaDoc.aMetaSlideSet;
     nIndex = getSafeIndex( nIndex, 0, aMetaSlideSet.length - 1 );

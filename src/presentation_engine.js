@@ -63,7 +63,15 @@
  *
  */
 
-import configureDetectionTools from 'dojo_sniffer.js'
+import {
+  getElementsByProperty,
+  getDefaultKeyCodeDictionary,
+  getDefaultCharCodeDictionary,
+  getDefaultMouseHandlerDictionary,
+  indexSetPageSlide
+} from './events.js';
+import configureDetectionTools from './dojo_sniffer.js';
+import './svgpath.js';
 
 window.onload = init;
 
