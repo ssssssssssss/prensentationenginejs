@@ -10,11 +10,13 @@
     "url": "https://github.com/ssssssssssss/prensentationenginejs.git"
   },
   "scripts": {
-    "build": "browserify -t [ babelify --presets [ env ] ]  src/presentation_engine.js -g uglifyify > dist/engine.min.js",
-    "watch": "watchify -t [ babelify --presets [ env ] ] src/presentation_engine.js -d -o ~/my/PPTX2HTML/engine.min.js -v"
+    "build": "browserify -t [ babelify --presets [ env ] --plugins [transform-regenerator transform-async-to-generator] ]  src/presentation_engine.js -g uglifyify > dist/engine.min.js",
+    "watch": "watchify -t [ babelify --presets [ env ] --plugins [transform-regenerator transform-async-to-generator] ] src/presentation_engine.js -d -o ~/my/PPTX2HTML/engine.min.js -v"
   },
   "devDependencies": {
     "babel-cli": "^6.0.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-regenerator": "^6.24.1",
     "babel-preset-env": "^1.4.0",
     "babelify": "^7.3.0",
     "browserify": "^14.3.0",

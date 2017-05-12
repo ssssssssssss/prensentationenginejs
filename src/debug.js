@@ -85,7 +85,3 @@ aActivityQueueDebugPrinter.off();
 
 export const aAnimatedElementDebugPrinter = new DebugPrinter();
 aAnimatedElementDebugPrinter.off();
-
-
-
-

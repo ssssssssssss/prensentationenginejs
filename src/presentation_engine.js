@@ -60,6 +60,7 @@
  */
 
 
+import regeneratorRuntime from "regenerator-runtime";
 
 /*****
  * @jessyinkstart
@@ -13315,13 +13316,19 @@ FrameSynchronization.prototype.markCurrentFrame = function()
     this.nNextFrameTargetTime = this.aTimer.getElapsedTime() + this.nFrameDuration;
 };
 
-FrameSynchronization.prototype.synchronize = function()
+FrameSynchronization.prototype.synchronize = async function()
 {
     if( this.bIsActive )
     {
-        // Do busy waiting for now.
-        while( this.aTimer.getElapsedTime() < this.nNextFrameTargetTime )
-            ;
+        const sleep = (resolve, reject) => {
+            if ( this.aTimer.getElapsedTime() < this.nNextFrameTargetTime ) {
+                requestAnimationFrame(() => sleep(resolve, reject));
+            }
+            else {
+                resolve();
+            }
+        }
+        await new Promise(sleep);
     }
 
     this.markCurrentFrame();
