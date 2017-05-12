@@ -1,3 +1,7 @@
+'use strict';
+
+import bind2 from "./obj_helper.js";
+
 function presentationEngineStop()
 {
     alert( 'We are sorry! An unexpected error occurred.\nThe presentation engine will be stopped' );
@@ -18,3 +22,70 @@ export function assert( condition, message )
         throw new Error( message );
     }
 }
+
+/*********************
+ ** Debug Utilities **
+ *********************/
+
+function DebugPrinter()
+{
+    this.bEnabled = false;
+}
+
+
+DebugPrinter.prototype.on = function()
+{
+    this.bEnabled = true;
+};
+
+DebugPrinter.prototype.off = function()
+{
+    this.bEnabled = false;
+};
+
+DebugPrinter.prototype.isEnabled = function()
+{
+    return this.bEnabled;
+};
+
+DebugPrinter.prototype.print = function( sMessage, nTime )
+{
+    if( this.isEnabled() )
+    {
+        var sInfo = 'DBG: ' + sMessage;
+        if( nTime )
+            sInfo += ' (at: ' + String( nTime / 1000 ) + 's)';
+        log( sInfo );
+    }
+};
+
+
+// - Debug Printers -
+var aGenericDebugPrinter = new DebugPrinter();
+aGenericDebugPrinter.on();
+export const DBGLOG = bind2( DebugPrinter.prototype.print, aGenericDebugPrinter );
+
+export const ANIMDBG = new DebugPrinter();
+ANIMDBG.off();
+
+export const aRegisterEventDebugPrinter = new DebugPrinter();
+aRegisterEventDebugPrinter.off();
+
+export const aTimerEventQueueDebugPrinter = new DebugPrinter();
+aTimerEventQueueDebugPrinter.off();
+
+export const aEventMultiplexerDebugPrinter = new DebugPrinter();
+aEventMultiplexerDebugPrinter.off();
+
+export const aNextEffectEventArrayDebugPrinter = new DebugPrinter();
+aNextEffectEventArrayDebugPrinter.off();
+
+export const aActivityQueueDebugPrinter = new DebugPrinter();
+aActivityQueueDebugPrinter.off();
+
+export const aAnimatedElementDebugPrinter = new DebugPrinter();
+aAnimatedElementDebugPrinter.off();
+
+
+
+
