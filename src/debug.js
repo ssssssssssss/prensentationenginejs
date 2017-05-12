@@ -1,6 +1,6 @@
 'use strict';
 
-import bind2 from "./obj_helper.js";
+import {bind2} from "./obj_helper.js";
 
 function presentationEngineStop()
 {
