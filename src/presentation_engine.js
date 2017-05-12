@@ -7554,7 +7554,6 @@ function createPropertyAnimation( sAttrName, aAnimatedElement, nWidth, nHeight )
         return null;
     }
 
-    console.log(nWidth, nHeight);
     var aGetModifier = aFunctorSet.getmod && aFunctorSet.getmod.call({nHeight, nWidth});
     var aSetModifier = aFunctorSet.setmod && aFunctorSet.setmod.call({nHeight, nWidth});
 
