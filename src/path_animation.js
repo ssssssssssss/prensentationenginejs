@@ -1,5 +1,6 @@
 import NSS from "./namespace.js";
 
+var SVGIdentityMatrix = document.documentElement.createSVGMatrix();
 function createUnitSquarePath()
 {
     var aPath = document.createElementNS( NSS['svg'], 'path' );

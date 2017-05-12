@@ -614,64 +614,6 @@ const reMath = (new RegExp).compile(/abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log
 const rePI = (new RegExp).compile(/pi(?!\w)/g);
 const reE = (new RegExp).compile(/e(?!\w)/g);
 
-/***************************
- ** OOP support functions **
- ***************************/
-
-function object( aObject )
-{
-    var F = function() {};
-    F.prototype = aObject;
-    return new F();
-}
-
-
-function extend( aSubType, aSuperType )
-{
-    if (!aSuperType || !aSubType)
-    {
-        alert('extend failed, verify dependencies');
-    }
-    var OP = Object.prototype;
-    var sp = aSuperType.prototype;
-    var rp = object( sp );
-    aSubType.prototype = rp;
-
-    rp.constructor = aSubType;
-    aSubType.superclass = sp;
-
-    // assign constructor property
-    if (aSuperType != Object && sp.constructor == OP.constructor)
-    {
-        sp.constructor = aSuperType;
-    }
-
-    return aSubType;
-}
-
-
-function instantiate( TemplateClass, BaseType )
-{
-    if( !TemplateClass.instanceSet )
-        TemplateClass.instanceSet = [];
-
-    var nSize = TemplateClass.instanceSet.length;
-
-    for( var i = 0; i < nSize; ++i )
-    {
-        if( TemplateClass.instanceSet[i].base === BaseType )
-            return TemplateClass.instanceSet[i].instance;
-    }
-
-    TemplateClass.instanceSet[ nSize ] = {};
-    TemplateClass.instanceSet[ nSize ].base = BaseType;
-    TemplateClass.instanceSet[ nSize ].instance = TemplateClass( BaseType );
-
-    return TemplateClass.instanceSet[ nSize ].instance;
-}
-
-
-
 /**********************************
  ** Helper functions and classes **
  **********************************/
@@ -2620,9 +2562,6 @@ function abandonIndexMode()
 
 
 
-
-
-
 // helper functions
 
 
@@ -2638,6 +2577,9 @@ import {
   mem_fn,
   bind,
   bind2,
+  object,
+  extend,
+  instantiate
 } from "./obj_helper.js";
 
 function getCurrentSystemTime()
@@ -3642,10 +3584,8 @@ var aAttributeMap =
         'height':           {   'type':         NUMBER_PROPERTY,
                                 'get':          'getHeight',
                                 'set':          'setHeight',
-                                'getmod':       () => {return makeScaler( 1/nHeight )},
-                                'setmod':       () => {return makeScaler( nHeight)}          },
-                                //'getmod':       "makeScaler( 1/nHeight )",
-                                //'setmod':       "makeScaler( nHeight)"          },
+                                'getmod':       function() {return makeScaler( 1/this.nHeight )},
+                                'setmod':       function() {return makeScaler( this.nHeight)}          },
 
         'opacity':          {   'type':         NUMBER_PROPERTY,
                                 'get':          'getOpacity',
@@ -3658,26 +3598,20 @@ var aAttributeMap =
         'width':            {   'type':         NUMBER_PROPERTY,
                                 'get':          'getWidth',
                                 'set':          'setWidth',
-                                'getmod':       () => {return makeScaler( 1/nWidth )},
-                                'setmod':       () => {return makeScaler( nWidth)}           },
-                                //'getmod':       "makeScaler( 1/nWidth )",
-                                //'setmod':       "makeScaler( nWidth)"           },
+                                'getmod':       function() {return makeScaler( 1/this.nWidth )},
+                                'setmod':       function() {return makeScaler( this.nWidth)}           },
 
         'x':                {   'type':         NUMBER_PROPERTY,
                                 'get':          'getX',
                                 'set':          'setX',
-                                'getmod':       () => {return makeScaler( 1/nWidth )},
-                                'setmod':       () => {return makeScaler( nWidth)}           },
-                                //'getmod':       "makeScaler( 1/nWidth )",
-                                //'setmod':       "makeScaler( nWidth)"           },
+                                'getmod':       function() {return makeScaler( 1/this.nWidth )},
+                                'setmod':       function() {return makeScaler( this.nWidth)}           },
 
         'y':                {   'type':         NUMBER_PROPERTY,
                                 'get':          'getY',
                                 'set':          'setY',
-                                'getmod':       () => {return makeScaler( 1/nHeight )},
-                                'setmod':       () => {return makeScaler( nHeight)}          },
-                                //'getmod':       "makeScaler( 1/nHeight )",
-                                //'setmod':       "makeScaler( nHeight)"          },
+                                'getmod':       function() {return makeScaler( 1/this.nHeight )},
+                                'setmod':       function() {return makeScaler( this.nHeight)}          },
 
         'fill':             {   'type':         ENUM_PROPERTY,
                                 'get':          'getFillStyle',
@@ -7620,11 +7554,9 @@ function createPropertyAnimation( sAttrName, aAnimatedElement, nWidth, nHeight )
         return null;
     }
 
-    var aGetModifier = aFunctorSet.getmod && aFunctorSet.getmod();
-    var aSetModifier = aFunctorSet.setmod && aFunctorSet.setmod();
-
-    //var aGetModifier = eval(aFunctorSet.getmod);
-    //var aSetModifier = eval(aFunctorSet.setmod);
+    console.log(nWidth, nHeight);
+    var aGetModifier = aFunctorSet.getmod && aFunctorSet.getmod.call({nHeight, nWidth});
+    var aSetModifier = aFunctorSet.setmod && aFunctorSet.setmod.call({nHeight, nWidth});
 
     return new GenericAnimation( bind( aAnimatedElement, aAnimatedElement[ sGetValueMethod ] ),
                                  bind( aAnimatedElement, aAnimatedElement[ sSetValueMethod ] ),

@@ -72,3 +72,59 @@ export function bind2( aFunction )
 
     return aResultFunction;
 }
+
+/***************************
+ ** OOP support functions **
+ ***************************/
+
+export function object( aObject )
+{
+    var F = function() {};
+    F.prototype = aObject;
+    return new F();
+}
+
+
+export function extend( aSubType, aSuperType )
+{
+    if (!aSuperType || !aSubType)
+    {
+        alert('extend failed, verify dependencies');
+    }
+    var OP = Object.prototype;
+    var sp = aSuperType.prototype;
+    var rp = object( sp );
+    aSubType.prototype = rp;
+
+    rp.constructor = aSubType;
+    aSubType.superclass = sp;
+
+    // assign constructor property
+    if (aSuperType != Object && sp.constructor == OP.constructor)
+    {
+        sp.constructor = aSuperType;
+    }
+
+    return aSubType;
+}
+
+
+export function instantiate( TemplateClass, BaseType )
+{
+    if( !TemplateClass.instanceSet )
+        TemplateClass.instanceSet = [];
+
+    var nSize = TemplateClass.instanceSet.length;
+
+    for( var i = 0; i < nSize; ++i )
+    {
+        if( TemplateClass.instanceSet[i].base === BaseType )
+            return TemplateClass.instanceSet[i].instance;
+    }
+
+    TemplateClass.instanceSet[ nSize ] = {};
+    TemplateClass.instanceSet[ nSize ].base = BaseType;
+    TemplateClass.instanceSet[ nSize ].instance = TemplateClass( BaseType );
+
+    return TemplateClass.instanceSet[ nSize ].instance;
+}
