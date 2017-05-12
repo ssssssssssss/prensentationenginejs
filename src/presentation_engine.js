@@ -617,6 +617,11 @@ var keyCodeDictionary = getDefaultKeyCodeDictionary();
 // Initialize mouse handler dictionary.
 var mouseHandlerDictionary = getDefaultMouseHandlerDictionary();
 
+// Regexp
+const reMath = (new RegExp).compile(/abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log|min|max/g);
+const rePI = (new RegExp).compile(/pi(?!\w)/g);
+const reE = (new RegExp).compile(/e(?!\w)/g);
+
 /***************************
  ** OOP support functions **
  ***************************/
@@ -2552,26 +2557,7 @@ function init()
     aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
 }
 
-function presentationEngineStop()
-{
-    alert( 'We are sorry! An unexpected error occurred.\nThe presentation engine will be stopped' );
-    document.onkeydown = null;
-    document.onkeypress = null;
-    document.onclick = null;
-    window.onmousewheel = null;
-}
-
-function assert( condition, message )
-{
-    if (!condition)
-    {
-        presentationEngineStop();
-        if (typeof console == 'object')
-            // eslint-disable-next-line no-console
-            console.trace();
-        throw new Error( message );
-    }
-}
+import assert from "./debug.js";
 
 function dispatchEffects(dir)
 {
@@ -3790,8 +3776,10 @@ var aAttributeMap =
         'height':           {   'type':         NUMBER_PROPERTY,
                                 'get':          'getHeight',
                                 'set':          'setHeight',
-                                'getmod':       () => makeScaler( 1/nHeight ),
-                                'setmod':       () => makeScaler( nHeight)          },
+                                'getmod':       () => {return makeScaler( 1/nHeight )},
+                                'setmod':       () => {return makeScaler( nHeight)}          },
+                                //'getmod':       "makeScaler( 1/nHeight )",
+                                //'setmod':       "makeScaler( nHeight)"          },
 
         'opacity':          {   'type':         NUMBER_PROPERTY,
                                 'get':          'getOpacity',
@@ -3804,20 +3792,26 @@ var aAttributeMap =
         'width':            {   'type':         NUMBER_PROPERTY,
                                 'get':          'getWidth',
                                 'set':          'setWidth',
-                                'getmod':       () => makeScaler( 1/nWidth ),
-                                'setmod':       () => makeScaler( nWidth)           },
+                                'getmod':       () => {return makeScaler( 1/nWidth )},
+                                'setmod':       () => {return makeScaler( nWidth)}           },
+                                //'getmod':       "makeScaler( 1/nWidth )",
+                                //'setmod':       "makeScaler( nWidth)"           },
 
         'x':                {   'type':         NUMBER_PROPERTY,
                                 'get':          'getX',
                                 'set':          'setX',
-                                'getmod':       () => makeScaler( 1/nWidth ),
-                                'setmod':       () => makeScaler( nWidth)           },
+                                'getmod':       () => {return makeScaler( 1/nWidth )},
+                                'setmod':       () => {return makeScaler( nWidth)}           },
+                                //'getmod':       "makeScaler( 1/nWidth )",
+                                //'setmod':       "makeScaler( nWidth)"           },
 
         'y':                {   'type':         NUMBER_PROPERTY,
                                 'get':          'getY',
                                 'set':          'setY',
-                                'getmod':       () => makeScaler( 1/nHeight ),
-                                'setmod':       () => makeScaler( nHeight)          },
+                                'getmod':       () => {return makeScaler( 1/nHeight )},
+                                'setmod':       () => {return makeScaler( nHeight)}          },
+                                //'getmod':       "makeScaler( 1/nHeight )",
+                                //'setmod':       "makeScaler( nHeight)"          },
 
         'fill':             {   'type':         ENUM_PROPERTY,
                                 'get':          'getFillStyle',
@@ -7740,10 +7734,7 @@ function makeScaler( nScale )
             };
 }
 
-
-
-
-function createPropertyAnimation( sAttrName, aAnimatedElement )
+function createPropertyAnimation( sAttrName, aAnimatedElement, nWidth, nHeight )
 {
     if( !aAttributeMap[ sAttrName ] )
     {
@@ -7763,9 +7754,11 @@ function createPropertyAnimation( sAttrName, aAnimatedElement )
         return null;
     }
 
-    var aGetModifier = aFunctorSet.getmod;
-    var aSetModifier = aFunctorSet.setmod;
+    var aGetModifier = aFunctorSet.getmod();
+    var aSetModifier = aFunctorSet.setmod();
 
+    //var aGetModifier = eval(aFunctorSet.getmod);
+    //var aSetModifier = eval(aFunctorSet.setmod);
 
     return new GenericAnimation( bind( aAnimatedElement, aAnimatedElement[ sGetValueMethod ] ),
                                  bind( aAnimatedElement, aAnimatedElement[ sSetValueMethod ] ),
@@ -13471,10 +13464,10 @@ function createActivity( aActivityParamSet, aAnimationNode, aAnimation, aInterpo
     if( aAnimationNode.getFormula() )
     {
         var sFormula =  aAnimationNode.getFormula();
-        var reMath = /abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log|min|max/g;
+        //var reMath = /abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log|min|max/g;
         sFormula = sFormula.replace(reMath, 'Math.$&');
-        sFormula = sFormula.replace(/pi(?!\w)/g, 'Math.PI');
-        sFormula = sFormula.replace(/e(?!\w)/g, 'Math.E');
+        sFormula = sFormula.replace(rePI, 'Math.PI');
+        sFormula = sFormula.replace(reE, 'Math.E');
         sFormula = sFormula.replace(/\$/g, '__PARAM0__');
 
         aActivityParamSet.aFormula = function( ) {
@@ -13681,16 +13674,21 @@ function extractAttributeValues( eValueType, aValueList, aValueSet, aBBox, nSlid
 }
 
 
-function evalValuesAttribute( aValueList, aValueSet )
+
+function evalValuesAttribute( aValueList, aValueSet, aBBox, nSlideWidth, nSlideHeight )
 {
-    var reMath = /abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log|min|max/g;
+    //var reMath = /abs|sqrt|asin|acos|atan|sin|cos|tan|exp|log|min|max/g;
+    var width = aBBox.width / nSlideWidth;
+    var height = aBBox.height / nSlideHeight;
+    var x = (aBBox.x + aBBox.width / 2) / nSlideWidth;
+    var y = (aBBox.y + aBBox.height / 2) / nSlideHeight; 
 
     for( var i = 0; i < aValueSet.length; ++i )
     {
         var sValue = aValueSet[i];
         sValue = sValue.replace(reMath, 'Math.$&');
-        sValue = sValue.replace(/pi(?!\w)/g, 'Math.PI');
-        sValue = sValue.replace(/e(?!\w)/g, 'Math.E');
+        sValue = sValue.replace(rePI, 'Math.PI');
+        sValue = sValue.replace(reE, 'Math.E');
         var aValue =  eval( sValue );
         aValueList.push( aValue );
     }
