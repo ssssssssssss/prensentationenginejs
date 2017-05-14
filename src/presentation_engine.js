@@ -61,6 +61,7 @@
 
 
 import regeneratorRuntime from "regenerator-runtime";
+import "./raf.js";
 
 /*****
  * @jessyinkstart
