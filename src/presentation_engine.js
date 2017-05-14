@@ -2665,8 +2665,7 @@ function booleanParser( sValue )
         return undefined;
 }
 
-function colorParser( sValue )
-{
+const colorParser = (function () {
     var sCommaPattern = ' *[,] *';
     var sIntegerPattern = '[+-]?[0-9]+';
     var sHexDigitPattern = '[0-9A-Fa-f]';
@@ -2691,36 +2690,39 @@ function colorParser( sValue )
     var reRGBInteger = new RegExp( sRGBIntegerPattern );
     var reRGBPercent = new RegExp( sRGBPercentPattern );
     var reHSLPercent = new RegExp( sHSLPercentPattern );
+    return function ( sValue )
+    {
 
-    if( reHexColor.test( sValue ) )
-    {
-        var aRGBTriple = reHexColor.exec( sValue );
+        if( reHexColor.test( sValue ) )
+        {
+            var aRGBTriple = reHexColor.exec( sValue );
 
-        var nRed    = parseInt( aRGBTriple[1], 16 ) / 255;
-        var nGreen  = parseInt( aRGBTriple[2], 16 ) / 255;
-        var nBlue   = parseInt( aRGBTriple[3], 16 ) / 255;
+            var nRed    = parseInt( aRGBTriple[1], 16 ) / 255;
+            var nGreen  = parseInt( aRGBTriple[2], 16 ) / 255;
+            var nBlue   = parseInt( aRGBTriple[3], 16 ) / 255;
 
-        return new RGBColor( nRed, nGreen, nBlue );
+            return new RGBColor( nRed, nGreen, nBlue );
+        }
+        else if( reHSLPercent.test( sValue ) )
+        {
+            sValue = sValue.replace( '%', '' ).replace( '%', '' );
+            return eval( sValue );
+        }
+        else if( reRGBInteger.test( sValue ) )
+        {
+            return eval( sValue );
+        }
+        else if( reRGBPercent.test( sValue ) )
+        {
+            sValue = 'p' + sValue.replace( '%', '' ).replace( '%', '' ).replace( '%', '' );
+            return eval( sValue );
+        }
+        else
+        {
+            return null;
+        }
     }
-    else if( reHSLPercent.test( sValue ) )
-    {
-        sValue = sValue.replace( '%', '' ).replace( '%', '' );
-        return eval( sValue );
-    }
-    else if( reRGBInteger.test( sValue ) )
-    {
-        return eval( sValue );
-    }
-    else if( reRGBPercent.test( sValue ) )
-    {
-        sValue = 'p' + sValue.replace( '%', '' ).replace( '%', '' ).replace( '%', '' );
-        return eval( sValue );
-    }
-    else
-    {
-        return null;
-    }
-}
+})();
 
 
 
@@ -12247,7 +12249,8 @@ function createActivity( aActivityParamSet, aAnimationNode, aAnimation, aInterpo
 
         aActivityParamSet.aFormula = function( ) {
 
-            return eval(sFormula);
+            return (new Function("return " + sFormula))();
+            //return eval(sFormula);
         };
     }
 
@@ -12464,7 +12467,7 @@ function evalValuesAttribute( aValueList, aValueSet, aBBox, nSlideWidth, nSlideH
         sValue = sValue.replace(reMath, 'Math.$&');
         sValue = sValue.replace(rePI, 'Math.PI');
         sValue = sValue.replace(reE, 'Math.E');
-        var aValue =  eval( sValue );
+        var aValue = (new Function( "x", "y", "return " + sValue )(x, y));
         aValueList.push( aValue );
     }
 }
