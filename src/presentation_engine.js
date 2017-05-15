@@ -596,7 +596,8 @@ var INDEX_OFFSET = 0;
 // Initialization.
 var Detect = configureDetectionTools();
 var theMetaDoc;
-var theSlideIndexPage;
+// Remove theSlideIndexPage in favor of lazy initialized object, see init() for detail
+// var theSlideIndexPage;
 var currentMode = SLIDE_MODE;
 var processingEffect = false;
 var nCurSlide = undefined;
@@ -2412,7 +2413,16 @@ function init()
     aSlideShow = new SlideShow();
     theMetaDoc =  new MetaDocument();
     aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
-    theSlideIndexPage = new SlideIndexPage();
+
+    //Lazy initialize objects for index view
+    Object.defineProperty(window, "theSlideIndexPage", {
+      get() {
+        if (!this._theSlideIndexPage) {
+          this._theSlideIndexPage = new SlideIndexPage();
+        }
+        return this._theSlideIndexPage;
+      }
+    });
     aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
 }
 
