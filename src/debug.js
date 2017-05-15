@@ -26,6 +26,24 @@ export function assert( condition, message )
 /*********************
  ** Debug Utilities **
  *********************/
+export function log( message )
+{
+    if( typeof console == 'object' )
+    {
+        // eslint-disable-next-line no-console
+        console.log( message );
+    }
+    else if( typeof opera == 'object' )
+    {
+        opera.postError( message );
+    }
+    // eslint-disable-next-line no-undef
+    else if( typeof java == 'object' && typeof java.lang == 'object' )
+    {
+        // eslint-disable-next-line no-undef
+        java.lang.System.out.println( message );
+    }
+}
 
 function DebugPrinter()
 {

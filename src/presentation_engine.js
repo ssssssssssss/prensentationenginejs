@@ -647,25 +647,6 @@ function getKeyByValue(aObj, value) {
   return null;
 }
 
-function log( message )
-{
-    if( typeof console == 'object' )
-    {
-        // eslint-disable-next-line no-console
-        console.log( message );
-    }
-    else if( typeof opera == 'object' )
-    {
-        opera.postError( message );
-    }
-    // eslint-disable-next-line no-undef
-    else if( typeof java == 'object' && typeof java.lang == 'object' )
-    {
-        // eslint-disable-next-line no-undef
-        java.lang.System.out.println( message );
-    }
-}
-
 function getNSAttribute( sNSPrefix, aElem, sAttrName )
 {
     if( !aElem ) return null;
@@ -844,7 +825,7 @@ function MetaDocument()
 
     // The collections for handling properties of each slide, svg elements
     // related to master pages and content and properties of text fields.
-    this.aMetaSlideSet = [];
+    this.aMetaSlideSet = new Array(this.nNumberOfSlides);
     this.aMasterPageSet = {};
     this.aTextFieldHandlerSet = {};
     this.aTextFieldContentProviderSet = [];
@@ -861,10 +842,21 @@ function MetaDocument()
 
     // We initialize the set of MetaSlide objects that handle the meta
     // information for each slide.
+    var that = this;
     for( var i = 0; i < this.nNumberOfSlides; ++i )
     {
-        var sMetaSlideId = aOOOElemMetaSlide + '_' + i;
-        this.aMetaSlideSet.push( new MetaSlide( sMetaSlideId, this ) );
+        //this.aMetaSlideSet.push( new MetaSlide( sMetaSlideId, this ) );
+        Object.defineProperty(this.aMetaSlideSet, i, {
+          get: (function() {
+            var sMetaSlideId = aOOOElemMetaSlide + '_' + i;
+            return function(){
+              if (!that[sMetaSlideId]) {
+                that[sMetaSlideId] = new MetaSlide( sMetaSlideId, that );
+              }
+              return that[sMetaSlideId];
+            }
+          })()
+        });
     }
     assert( this.aMetaSlideSet.length == this.nNumberOfSlides,
             'MetaDocument: aMetaSlideSet.length != nNumberOfSlides.' );
@@ -946,18 +938,18 @@ initSlideAnimationsMap : function()
  */
 function MetaSlide( sMetaSlideId, aMetaDoc )
 {
-    this.theDocument = document;
+    var theDocument = document;
     this.id = sMetaSlideId;
     this.theMetaDoc = aMetaDoc;
 
     // We get a reference to the meta-slide element.
-    this.element = this.theDocument.getElementById( this.id );
+    this.element = theDocument.getElementById( this.id );
     assert( this.element,
             'MetaSlide: meta_slide element <' + this.id + '> not found.' );
 
     // We get a reference to the slide element.
     this.slideId = this.element.getAttributeNS( NSS['ooo'], aOOOAttrSlide );
-    this.slideElement = this.theDocument.getElementById( this.slideId );
+    this.slideElement = theDocument.getElementById( this.slideId );
     assert( this.slideElement,
             'MetaSlide: slide element <' + this.slideId + '> not found.' );
 
@@ -2425,6 +2417,7 @@ function init()
 }
 
 import {
+  log,
   assert,
   DBGLOG,
   ANIMDBG,
