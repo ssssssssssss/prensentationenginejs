@@ -8710,8 +8710,7 @@ AnimatedSlide.prototype.setOpacity = function( nValue )
  */
 AnimatedSlide.prototype.translate = function( nDx, nDy )
 {
-    var sTransformAttr = 'translate(' + nDx + ',' + nDy + ')';
-    this.aSlideElement.setAttribute( 'transform', sTransformAttr );
+    this.aSlideElement.setAttribute( 'transform', 'translate(' + nDx + ',' + nDy + ')' );
 };
 
 /** setClipPath
