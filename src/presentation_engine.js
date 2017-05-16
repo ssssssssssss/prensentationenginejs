@@ -865,62 +865,62 @@ function MetaDocument()
 
 MetaDocument.prototype =
 {
-/*** public methods ***/
+    /*** public methods ***/
 
-/** getCurrentSlide
- *
- *  @return
- *      The MetaSlide object handling the current slide.
- */
-getCurrentSlide : function()
-{
-    return this.aMetaSlideSet[nCurSlide];
-},
-
-/** setCurrentSlide
- *
- *  @param nSlideIndex
- *      The index of the slide to show.
- */
-setCurrentSlide : function( nSlideIndex )
-{
-    if( nSlideIndex >= 0 &&  nSlideIndex < this.nNumberOfSlides )
+    /** getCurrentSlide
+     *
+     *  @return
+     *      The MetaSlide object handling the current slide.
+     */
+    getCurrentSlide : function()
     {
-        if( nCurSlide !== undefined )
-            this.aMetaSlideSet[nCurSlide].hide();
-        this.aMetaSlideSet[nSlideIndex].show();
-        nCurSlide = nSlideIndex;
-    }
-    else
+        return this.aMetaSlideSet[nCurSlide];
+    },
+
+    /** setCurrentSlide
+     *
+     *  @param nSlideIndex
+     *      The index of the slide to show.
+     */
+    setCurrentSlide : function( nSlideIndex )
     {
-        log('MetaDocument.setCurrentSlide: slide index out of range: ' + nSlideIndex );
-    }
-},
-
-/*** private methods ***/
-
-initSlideAnimationsMap : function()
-{
-    var aAnimationsSection = document.getElementById( 'presentation-animations' );
-    if( aAnimationsSection )
-    {
-        var aAnimationsDefSet = aAnimationsSection.getElementsByTagName( 'defs' );
-
-        // we have at least one slide with animations ?
-        this.bIsAnimated = ( typeof aAnimationsDefSet.length =='number' &&
-                             aAnimationsDefSet.length > 0 );
-
-        for( var i = 0; i < aAnimationsDefSet.length; ++i )
+        if( nSlideIndex >= 0 &&  nSlideIndex < this.nNumberOfSlides )
         {
-            var sSlideId = aAnimationsDefSet[i].getAttributeNS( NSS['ooo'], aOOOAttrSlide );
-            var aChildSet = getElementChildren( aAnimationsDefSet[i] );
-            if( sSlideId && ( aChildSet.length === 1 ) )
+            if( nCurSlide !== undefined )
+                this.aMetaSlideSet[nCurSlide].hide();
+            this.aMetaSlideSet[nSlideIndex].show();
+            nCurSlide = nSlideIndex;
+        }
+        else
+        {
+            log('MetaDocument.setCurrentSlide: slide index out of range: ' + nSlideIndex );
+        }
+    },
+
+    /*** private methods ***/
+
+    initSlideAnimationsMap : function()
+    {
+        var aAnimationsSection = document.getElementById( 'presentation-animations' );
+        if( aAnimationsSection )
+        {
+            var aAnimationsDefSet = aAnimationsSection.getElementsByTagName( 'defs' );
+
+            // we have at least one slide with animations ?
+            this.bIsAnimated = ( typeof aAnimationsDefSet.length =='number' &&
+                                 aAnimationsDefSet.length > 0 );
+
+            for( var i = 0; i < aAnimationsDefSet.length; ++i )
             {
-                this.aSlideAnimationsMap[ sSlideId ] = aChildSet[0];
+                var sSlideId = aAnimationsDefSet[i].getAttributeNS( NSS['ooo'], aOOOAttrSlide );
+                var aChildSet = getElementChildren( aAnimationsDefSet[i] );
+                if( sSlideId && ( aChildSet.length === 1 ) )
+                {
+                    this.aSlideAnimationsMap[ sSlideId ] = aChildSet[0];
+                }
             }
         }
     }
-}
 
 }; // end MetaDocument prototype
 
@@ -2415,7 +2415,7 @@ function init()
     aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
 
     //Lazy initialize objects for index view
-    Object.defineProperty(window, "theSlideIndexPage", {
+    Object.defineProperty(this, "theSlideIndexPage", {
       get() {
         if (!this._theSlideIndexPage) {
           this._theSlideIndexPage = new SlideIndexPage();
@@ -5111,7 +5111,7 @@ function Timing( aAnimationNode, sTimingAttribute )
     this.aAnimationNode = aAnimationNode;     // the node, the timing attribute belongs to
     this.sTimingDescription = removeWhiteSpaces( sTimingAttribute );
     this.eTimingType = UNKNOWN_TIMING;
-    this.nOffset = 0.0;                       // in seconds
+    this.nOffset = 0;                       // in miliseconds
     this.sEventBaseElementId = '';            // the element id for event based timing
     this.eEventType = EVENT_TRIGGER_UNKNOWN;  // the event type
 }
@@ -5220,7 +5220,7 @@ Timing.prototype.parse = function()
                 TimeInSec = Timing.parseClockValue( sClockValue );
                 if( TimeInSec != undefined )
                 {
-                    this.nOffset = ( bPositiveOffset ) ? TimeInSec : -TimeInSec;
+                    this.nOffset = bPositiveOffset ? TimeInSec : -TimeInSec;
                 }
                 else
                 {
@@ -5236,7 +5236,7 @@ Timing.prototype.parse = function()
 Timing.parseClockValue = function( sClockValue )
 {
     if( !sClockValue )
-        return 0.0;
+        return 0;
 
     var nTimeInSec = undefined;
 
@@ -5302,9 +5302,10 @@ Timing.parseClockValue = function( sClockValue )
 
     }
 
-    if( nTimeInSec )
-        nTimeInSec = parseFloat( nTimeInSec.toFixed( 3 ) );
-    return nTimeInSec;
+    //if( nTimeInSec )
+    //    nTimeInSec = parseFloat( nTimeInSec.toFixed( 3 ) );
+    var nTimeInMs = nTimeInSec ? parseInt(nTimeInSec * 1000) : 0;
+    return nTimeInMs;
 };
 
 Timing.prototype.info = function( bVerbose )
@@ -5368,8 +5369,8 @@ function Duration( sDurationAttribute )
     else
     {
         this.nValue = Timing.parseClockValue( sDurationAttribute );
-        if( this.nValue <= 0.0 )
-            this.nValue = 0.001;  // duration must be always greater than 0
+        if( this.nValue <= 0 )
+            this.nValue = 1;  // duration must be always greater than 0
     }
     this.bDefined = true;
 }
@@ -12487,11 +12488,11 @@ var BACKWARD    = 0;
 var FORWARD     = 1;
 
 var MAXIMUM_FRAME_COUNT                 = 60;
-var MINIMUM_TIMEOUT                     = 1.0 / MAXIMUM_FRAME_COUNT;
-var MAXIMUM_TIMEOUT                     = 4.0;
+var MINIMUM_TIMEOUT                     = 1000 / MAXIMUM_FRAME_COUNT;
+var MAXIMUM_TIMEOUT                     = 4000;
 var MINIMUM_FRAMES_PER_SECONDS          = 10;
 var PREFERRED_FRAMES_PER_SECONDS        = 50;
-var PREFERRED_FRAME_RATE                = 1.0 / PREFERRED_FRAMES_PER_SECONDS;
+var PREFERRED_FRAME_RATE                = 1000 / PREFERRED_FRAMES_PER_SECONDS;
 
 
 function Effect( nId )
@@ -13265,7 +13266,7 @@ SlideShow.prototype.update = function()
         }
 
         this.bIsIdle = false;
-        window.setTimeout( aSlideShow.update.bind(this), nNextTimeout * 1000 );
+        window.setTimeout( aSlideShow.update.bind(this), nNextTimeout );
     }
     else
     {
@@ -13734,7 +13735,7 @@ ElapsedTime.prototype.releaseTimer = function()
 
 ElapsedTime.prototype.getSystemTime = function()
 {
-    return ( getCurrentSystemTime() / 1000.0 );
+    return getCurrentSystemTime();
 };
 
 ElapsedTime.prototype.getCurrentTime = function()
