@@ -499,6 +499,56 @@ import "./svgPath.js";
  */
 
 
+/** Initialization function.
+ *  The whole presentation is set-up in this function.
+ */
+function init()
+{
+    if (init.done) {
+      return;
+    }
+    var VIEWBOX = ROOT_NODE.getAttribute('viewBox');
+
+    if( VIEWBOX )
+    {
+        WIDTH = ROOT_NODE.viewBox.animVal.width;
+        HEIGHT = ROOT_NODE.viewBox.animVal.height;
+    }
+
+    aSlideShow = new SlideShow();
+    theMetaDoc =  new MetaDocument();
+    aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
+
+    //Lazy initialize objects for index view
+    var that = this;
+    Object.defineProperty(this, "theSlideIndexPage", {
+      get() {
+        if (!that._theSlideIndexPage) {
+          that._theSlideIndexPage = new SlideIndexPage();
+        }
+        return that._theSlideIndexPage;
+      }
+    });
+    aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
+
+    //Set event handler for key down.
+    document.onkeydown = onKeyDown;
+
+    //Set mouse event handler.
+    document.onmouseup = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_UP ); };
+
+    //Mozilla
+    if( window.addEventListener ) {
+        window.addEventListener( 'DOMMouseScroll', function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); }, false );
+    }
+    //Opera Safari OK - may not work in IE
+    window.onmousewheel = function( aEvt ) {
+      return mouseHandlerDispatch( aEvt, MOUSE_WHEEL );
+    };
+    init.done = true;
+}
+
+document.addEventListener("DOMContentLoaded", init);
 window.onload = init;
 
 
@@ -1395,7 +1445,6 @@ PlaceholderShape.prototype.isValid = function()
  */
 PlaceholderShape.prototype.init = function()
 {
-
     var aTextFieldElement = getElementByClassName( this.masterPage.backgroundObjects, this.className );
     if( aTextFieldElement )
     {
@@ -2381,53 +2430,6 @@ Thumbnail.prototype.onMouseOver = function()
 
 
 
-
-
-/** Initialization function.
- *  The whole presentation is set-up in this function.
- */
-function init()
-{
-    var VIEWBOX = ROOT_NODE.getAttribute('viewBox');
-
-    if( VIEWBOX )
-    {
-        WIDTH = ROOT_NODE.viewBox.animVal.width;
-        HEIGHT = ROOT_NODE.viewBox.animVal.height;
-    }
-
-    aSlideShow = new SlideShow();
-    theMetaDoc =  new MetaDocument();
-    aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
-
-    //Lazy initialize objects for index view
-    var that = this;
-    Object.defineProperty(this, "theSlideIndexPage", {
-      get() {
-        if (!that._theSlideIndexPage) {
-          that._theSlideIndexPage = new SlideIndexPage();
-        }
-        return that._theSlideIndexPage;
-      }
-    });
-    aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
-
-    //Set event handler for key down.
-    document.onkeydown = onKeyDown;
-
-    //Set mouse event handler.
-    document.onmouseup = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_UP ); };
-
-    //Mozilla
-    if( window.addEventListener )
-    {
-        window.addEventListener( 'DOMMouseScroll', function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); }, false );
-    }
-
-    //Opera Safari OK - may not work in IE
-    window.onmousewheel
-        = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); };
-    }
 
 import {
   log,
