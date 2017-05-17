@@ -864,7 +864,7 @@
             return flag;
         };
 
-        Source.prototype.parseSegment = function() {
+        Source.prototype.parseSegment = function(owningPathSegList) {
             var lookahead = this._string[this._currentIndex];
             var command = this._pathSegTypeFromChar(lookahead);
             if (command == SVGPathSeg.PATHSEG_UNKNOWN) {
@@ -901,49 +901,33 @@
                     this._skipOptionalSpaces();
                     return new SVGPathSegClosePath(owningPathSegList);
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoCubicRel(owningPathSegList, points.x, points.y, points.x1, points.y1, points.x2, points.y2);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoCubicAbs(owningPathSegList, points.x, points.y, points.x1, points.y1, points.x2, points.y2);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
-                {
                     const points = {x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoCubicSmoothRel(owningPathSegList, points.x, points.y, points.x2, points.y2);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
-                {
                     const points = {x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoCubicSmoothAbs(owningPathSegList, points.x, points.y, points.x2, points.y2);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoQuadraticRel(owningPathSegList, points.x, points.y, points.x1, points.y1);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegCurvetoQuadraticAbs(owningPathSegList, points.x, points.y, points.x1, points.y1);
-                }
                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
                     return new SVGPathSegCurvetoQuadraticSmoothRel(owningPathSegList, this._parseNumber(), this._parseNumber());
                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
                     return new SVGPathSegCurvetoQuadraticSmoothAbs(owningPathSegList, this._parseNumber(), this._parseNumber());
                 case SVGPathSeg.PATHSEG_ARC_REL:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), arcAngle: this._parseNumber(), arcLarge: this._parseArcFlag(), arcSweep: this._parseArcFlag(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegArcRel(owningPathSegList, points.x, points.y, points.x1, points.y1, points.arcAngle, points.arcLarge, points.arcSweep);
-                }
                 case SVGPathSeg.PATHSEG_ARC_ABS:
-                {
                     const points = {x1: this._parseNumber(), y1: this._parseNumber(), arcAngle: this._parseNumber(), arcLarge: this._parseArcFlag(), arcSweep: this._parseArcFlag(), x: this._parseNumber(), y: this._parseNumber()};
                     return new SVGPathSegArcAbs(owningPathSegList, points.x, points.y, points.x1, points.y1, points.arcAngle, points.arcLarge, points.arcSweep);
-                }
                 default:
                     throw 'Unknown path seg type.'
             }
@@ -971,7 +955,7 @@
                 return [];
             var builder = new Builder();
             while (source.hasMoreData()) {
-                var pathSeg = source.parseSegment();
+                var pathSeg = source.parseSegment(owningPathSegList);
                 if (!pathSeg)
                     return [];
                 builder.appendSegment(pathSeg);
