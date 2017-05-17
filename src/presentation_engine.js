@@ -8797,9 +8797,9 @@ function AnimatedElement( aElement )
     this.eAdditiveMode = ADDITIVE_MODE_REPLACE;
     this.bIsUpdated = true;
 
-    this.aTMatrix = document.documentElement.createSVGMatrix();
-    this.aCTM = document.documentElement.createSVGMatrix();
-    this.aICTM = document.documentElement.createSVGMatrix();
+    //this.aTMatrix = document.documentElement.createSVGMatrix();
+    //this.aCTM = document.documentElement.createSVGMatrix();
+    //this.aICTM = document.documentElement.createSVGMatrix();
 
     this.initElement();
 }
