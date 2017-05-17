@@ -130,71 +130,71 @@ export default function configureDetectionTools()
 
     var detect =
     {
-		// isFF: Number|undefined
-		//		Version as a Number if client is FireFox. undefined otherwise. Corresponds to
-		//		major detected FireFox version (1.5, 2, 3, etc.)
-		isFF: has('ff'),
+        // isFF: Number|undefined
+        //		Version as a Number if client is FireFox. undefined otherwise. Corresponds to
+        //		major detected FireFox version (1.5, 2, 3, etc.)
+        isFF: has('ff'),
 
-		// isIE: Number|undefined
-		//		Version as a Number if client is MSIE(PC). undefined otherwise. Corresponds to
-		//		major detected IE version (6, 7, 8, etc.)
-		isIE: has('ie'),
+        // isIE: Number|undefined
+        //		Version as a Number if client is MSIE(PC). undefined otherwise. Corresponds to
+        //		major detected IE version (6, 7, 8, etc.)
+        isIE: has('ie'),
 
-		// isKhtml: Number|undefined
-		//		Version as a Number if client is a KHTML browser. undefined otherwise. Corresponds to major
-		//		detected version.
-		isKhtml: has('khtml'),
+        // isKhtml: Number|undefined
+        //		Version as a Number if client is a KHTML browser. undefined otherwise. Corresponds to major
+        //		detected version.
+        isKhtml: has('khtml'),
 
-		// isWebKit: Number|undefined
-		//		Version as a Number if client is a WebKit-derived browser (Konqueror,
-		//		Safari, Chrome, etc.). undefined otherwise.
-		isWebKit: has('webkit'),
+        // isWebKit: Number|undefined
+        //		Version as a Number if client is a WebKit-derived browser (Konqueror,
+        //		Safari, Chrome, etc.). undefined otherwise.
+        isWebKit: has('webkit'),
 
-		// isMozilla: Number|undefined
-		//		Version as a Number if client is a Mozilla-based browser (Firefox,
-		//		SeaMonkey). undefined otherwise. Corresponds to major detected version.
-		isMozilla: has('mozilla'),
-		// isMoz: Number|undefined
-		//		Version as a Number if client is a Mozilla-based browser (Firefox,
-		//		SeaMonkey). undefined otherwise. Corresponds to major detected version.
-		isMoz: has('mozilla'),
+        // isMozilla: Number|undefined
+        //		Version as a Number if client is a Mozilla-based browser (Firefox,
+        //		SeaMonkey). undefined otherwise. Corresponds to major detected version.
+        isMozilla: has('mozilla'),
+        // isMoz: Number|undefined
+        //		Version as a Number if client is a Mozilla-based browser (Firefox,
+        //		SeaMonkey). undefined otherwise. Corresponds to major detected version.
+        isMoz: has('mozilla'),
 
-		// isOpera: Number|undefined
-		//		Version as a Number if client is Opera. undefined otherwise. Corresponds to
-		//		major detected version.
-		isOpera: has('opera'),
+        // isOpera: Number|undefined
+        //		Version as a Number if client is Opera. undefined otherwise. Corresponds to
+        //		major detected version.
+        isOpera: has('opera'),
 
-		// isSafari: Number|undefined
-		//		Version as a Number if client is Safari or iPhone. undefined otherwise.
-		isSafari: has('safari'),
+        // isSafari: Number|undefined
+        //		Version as a Number if client is Safari or iPhone. undefined otherwise.
+        isSafari: has('safari'),
 
-		// isChrome: Number|undefined
-		//		Version as a Number if client is Chrome browser. undefined otherwise.
-		isChrome: has('chrome'),
+        // isChrome: Number|undefined
+        //		Version as a Number if client is Chrome browser. undefined otherwise.
+        isChrome: has('chrome'),
 
-		// isMac: Boolean
-		//		True if the client runs on Mac
-		isMac: has('mac'),
+        // isMac: Boolean
+        //		True if the client runs on Mac
+        isMac: has('mac'),
 
-		// isIos: Boolean
-		//		True if client is iPhone, iPod, or iPad
-		isIos: has('ios'),
+        // isIos: Boolean
+        //		True if client is iPhone, iPod, or iPad
+        isIos: has('ios'),
 
-		// isAndroid: Number|undefined
-		//		Version as a Number if client is android browser. undefined otherwise.
-		isAndroid: has('android'),
+        // isAndroid: Number|undefined
+        //		Version as a Number if client is android browser. undefined otherwise.
+        isAndroid: has('android'),
 
-		// isWii: Boolean
-		//		True if client is Wii
-		isWii: has('wii'),
+        // isWii: Boolean
+        //		True if client is Wii
+        isWii: has('wii'),
 
-		// isQuirks: Boolean
-		//		Page is in quirks mode.
-		isQuirks: has('quirks'),
+        // isQuirks: Boolean
+        //		Page is in quirks mode.
+        isQuirks: has('quirks'),
 
-		// isAir: Boolean
-		//		True if client is Adobe Air
-		isAir: has('air')
+        // isAir: Boolean
+        //		True if client is Adobe Air
+        isAir: has('air')
     };
     return detect;
 }
