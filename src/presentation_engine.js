@@ -120,8 +120,6 @@ function onKeyDown( aEvt )
         return null;
     }
 }
-//Set event handler for key down.
-document.onkeydown = onKeyDown;
 
 /** Event handler for key press.
  *
@@ -283,16 +281,6 @@ function slideOnMouseWheel(aEvt)
     aEvt.returnValue = false;
 }
 
-//Mozilla
-if( window.addEventListener )
-{
-    window.addEventListener( 'DOMMouseScroll', function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); }, false );
-}
-
-//Opera Safari OK - may not work in IE
-window.onmousewheel
-    = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); };
-
 /** Function to handle all mouse events.
  *
  *  @param  aEvt    event
@@ -320,9 +308,6 @@ function mouseHandlerDispatch( aEvt, anAction )
 
     return retVal;
 }
-
-//Set mouse event handler.
-document.onmouseup = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_UP ); };
 
 
 /** mouseClickHelper
@@ -2426,7 +2411,23 @@ function init()
       }
     });
     aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
-}
+
+    //Set event handler for key down.
+    document.onkeydown = onKeyDown;
+
+    //Set mouse event handler.
+    document.onmouseup = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_UP ); };
+
+    //Mozilla
+    if( window.addEventListener )
+    {
+        window.addEventListener( 'DOMMouseScroll', function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); }, false );
+    }
+
+    //Opera Safari OK - may not work in IE
+    window.onmousewheel
+        = function( aEvt ) { return mouseHandlerDispatch( aEvt, MOUSE_WHEEL ); };
+    }
 
 import {
   log,
@@ -8733,7 +8734,6 @@ AnimatedSlide.prototype.setOpacity = function( nValue )
 AnimatedSlide.prototype.translate = function( nDx, nDy )
 {
     this.aSlideElement.style.transform = 'translate3d(' + nDx + 'px,' + nDy + 'px,0px)';
-    debugger;
     //this.aSlideElement.setAttribute( 'transform', 'translate(' + nDx + ',' + nDy + ')' );
 };
 
