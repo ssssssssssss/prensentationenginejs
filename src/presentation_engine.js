@@ -8536,6 +8536,17 @@ function AnimatedSlide( aMetaSlide )
     this.bIsClipped = false;
 }
 
+AnimatedSlide.transform = (() => {
+  const props = ['transform', 'webkitTransform', 'mozTransform', 'msTransform'];
+  for (let i = props.length; i>0; i--){
+    let prop = props[i-1];
+    if (prop in document.documentElement.style) {
+      return prop;
+    }
+  }
+  return props[0];
+})();
+
 /** show
  *  Set the visibility property of the slide to 'inherit'
  *  and update the master page view.
@@ -8591,7 +8602,7 @@ AnimatedSlide.prototype.reset = function()
         this.aSlideElement.removeAttribute( sAttrName );
         if (sAttrName === "transform") {
             // Safari doesn't restore the state after remove CSS transform, so set a 2d translate to workaround.
-            this.aSlideElement.style[sAttrName] = "translate(0,0)";
+            this.aSlideElement.style[AnimatedSlide.transform] = "translate(0,0)";
         }
         else {
             this.aSlideElement.style[sAttrName] = "";
@@ -8733,7 +8744,7 @@ AnimatedSlide.prototype.setOpacity = function( nValue )
  */
 AnimatedSlide.prototype.translate = function( nDx, nDy )
 {
-    this.aSlideElement.style.transform = 'translate3d(' + nDx + 'px,' + nDy + 'px,0px)';
+    this.aSlideElement.style[AnimatedSlide.transform] = 'translate3d(' + nDx + 'px,' + nDy + 'px,0px)';
     //this.aSlideElement.setAttribute( 'transform', 'translate(' + nDx + ',' + nDy + ')' );
 };
 
