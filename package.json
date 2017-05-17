@@ -23,5 +23,8 @@
     "uglify": "^0.1.5",
     "uglifyify": "^3.0.4",
     "watchify": "^3.9.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0"
   }
 }

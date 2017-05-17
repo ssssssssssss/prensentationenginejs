@@ -62,6 +62,7 @@
 
 import regeneratorRuntime from "regenerator-runtime";
 import "./raf.js";
+import "babel-polyfill";
 
 /*****
  * @jessyinkstart
@@ -2415,12 +2416,13 @@ function init()
     aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
 
     //Lazy initialize objects for index view
+    var that = this;
     Object.defineProperty(this, "theSlideIndexPage", {
       get() {
-        if (!this._theSlideIndexPage) {
-          this._theSlideIndexPage = new SlideIndexPage();
+        if (!that._theSlideIndexPage) {
+          that._theSlideIndexPage = new SlideIndexPage();
         }
-        return this._theSlideIndexPage;
+        return that._theSlideIndexPage;
       }
     });
     aSlideShow.displaySlide( theMetaDoc.nStartSlideNumber, false );
@@ -8586,6 +8588,14 @@ AnimatedSlide.prototype.reset = function()
     {
         var sAttrName = this.aUsedAttributeSet[i];
         this.aSlideElement.removeAttribute( sAttrName );
+        if (sAttrName === "transform") {
+            // Safari doesn't restore the state after remove CSS transform, so set a 2d translate to workaround.
+            this.aSlideElement.style[sAttrName] = "translate(0,0)";
+        }
+        else {
+            this.aSlideElement.style[sAttrName] = "";
+        }
+
     }
     this.aUsedAttributeSet = [];
 };
@@ -8708,7 +8718,8 @@ AnimatedSlide.prototype.getHeight = function()
  */
 AnimatedSlide.prototype.setOpacity = function( nValue )
 {
-    this.aSlideElement.setAttribute( 'opacity', nValue );
+    //this.aSlideElement.setAttribute( 'opacity', nValue );
+    this.aSlideElement.style.opacity = nValue;
 };
 
 /** translate
@@ -8721,7 +8732,9 @@ AnimatedSlide.prototype.setOpacity = function( nValue )
  */
 AnimatedSlide.prototype.translate = function( nDx, nDy )
 {
-    this.aSlideElement.setAttribute( 'transform', 'translate(' + nDx + ',' + nDy + ')' );
+    this.aSlideElement.style.transform = 'translate3d(' + nDx + 'px,' + nDy + 'px,0px)';
+    debugger;
+    //this.aSlideElement.setAttribute( 'transform', 'translate(' + nDx + ',' + nDy + ')' );
 };
 
 /** setClipPath
@@ -8788,6 +8801,7 @@ AnimatedElement.prototype.initElement = function()
 
     // add a transform attribute of type matrix
     this.aActiveElement.setAttribute( 'transform', makeMatrixString( 1, 0, 0, 1, 0, 0 ) );
+    this.aActiveElement.setAttribute( 'style', 'will-change:transform,opacity;' );
 };
 
 /** initClipPath
@@ -9156,12 +9170,14 @@ AnimatedElement.prototype.setHeight = function( nNewHeight )
 
 AnimatedElement.prototype.getOpacity = function()
 {
-    return this.aActiveElement.getAttribute( 'opacity' );
+    //return this.aActiveElement.getAttribute( 'opacity' );
+    return this.aActiveElement.style.opacity || this.aActiveElement.getAttribute( 'opacity' );
 };
 
 AnimatedElement.prototype.setOpacity = function( nValue )
 {
-    this.aActiveElement.setAttribute( 'opacity', nValue );
+    //this.aActiveElement.setAttribute( 'opacity', nValue );
+    this.aActiveElement.style.opacity = nValue;
 };
 
 AnimatedElement.prototype.getRotationAngle = function()
@@ -13329,7 +13345,8 @@ FrameSynchronization.prototype.synchronize = async function()
     {
         const sleep = (resolve, reject) => {
             if ( this.aTimer.getElapsedTime() < this.nNextFrameTargetTime ) {
-                requestAnimationFrame(() => sleep(resolve, reject));
+                setTimeout(resolve, this.nNextFrameTargetTime - this.aTimer.getElapsedTime());
+                //requestAnimationFrame(() => sleep(resolve, reject));
             }
             else {
                 resolve();
