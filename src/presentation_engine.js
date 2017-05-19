@@ -520,8 +520,8 @@ function init()
     aSlideShow.bIsEnabled = theMetaDoc.bIsAnimated;
 
     //Lazy initialize objects for index view
-    var that = this;
-    Object.defineProperty(this, "theSlideIndexPage", {
+    var that = window;
+    Object.defineProperty(that, "theSlideIndexPage", {
       get() {
         if (!that._theSlideIndexPage) {
           that._theSlideIndexPage = new SlideIndexPage();
