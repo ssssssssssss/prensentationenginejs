@@ -1,6 +1,18 @@
 import NSS from "./namespace.js";
 
 var SVGIdentityMatrix = document.documentElement.createSVGMatrix();
+
+/** getRandomInt
+ *
+ * @param nMax
+ * @returns {number}
+ *   an integer in [0,nMax[
+ */
+function getRandomInt( nMax )
+{
+    return Math.floor( Math.random() * nMax );
+}
+
 function createUnitSquarePath()
 {
     var aPath = document.createElementNS( NSS['svg'], 'path' );
@@ -23,6 +35,38 @@ function pruneScaleValue( nVal )
         return (nVal < -0.00001 ? nVal : -0.00001);
     else
         return (nVal > 0.00001 ? nVal : 0.00001);
+}
+
+/** flipOnYAxis
+ *  Flips the SVG Path element along y-axis.
+ *
+ *  @param aPath
+ *      An object of type SVGPathElement to be flipped.
+ */
+function flipOnYAxis( aPath )
+{
+    var aPolyPath = aPath.cloneNode(true);
+    var aTransform = document.documentElement.createSVGMatrix();
+    aTransform.a = -1;
+    aTransform.e = 1;
+    aPolyPath.matrixTransform(aTransform);
+    return aPolyPath;
+}
+
+/** flipOnXAxis
+ *  Flips the SVG Path element along x-axis
+ *
+ *  @param aPath
+ *      An object of type SVGPathElement to be flipped
+ */
+function flipOnXAxis( aPath )
+{
+    var aPolyPath = aPath.cloneNode(true);
+    var aTransform = document.documentElement.createSVGMatrix();
+    aTransform.d = -1;
+    aTransform.f = 1;
+    aPolyPath.matrixTransform(aTransform);
+    return aPolyPath;
 }
 
 

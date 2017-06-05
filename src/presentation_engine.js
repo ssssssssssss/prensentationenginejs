@@ -803,17 +803,6 @@ function getSafeIndex( nIndex, nMin, nMax )
         return nIndex;
 }
 
-/** getRandomInt
- *
- * @param nMax
- * @returns {number}
- *   an integer in [0,nMax[
- */
-function getRandomInt( nMax )
-{
-    return Math.floor( Math.random() * nMax );
-}
-
 
 /************************
  ***   Core Classes   ***
@@ -3062,38 +3051,6 @@ SVGPathElement.prototype.appendPath = function( aPath )
     sPathData += ( ' ' + aPath.getAttribute( 'd' ) );
     this.setAttribute( 'd', sPathData );
 };
-
-/** flipOnYAxis
- *  Flips the SVG Path element along y-axis.
- *
- *  @param aPath
- *      An object of type SVGPathElement to be flipped.
- */
-function flipOnYAxis( aPath )
-{
-    var aPolyPath = aPath.cloneNode(true);
-    var aTransform = document.documentElement.createSVGMatrix();
-    aTransform.a = -1;
-    aTransform.e = 1;
-    aPolyPath.matrixTransform(aTransform);
-    return aPolyPath;
-}
-
-/** flipOnXAxis
- *  Flips the SVG Path element along x-axis
- *
- *  @param aPath
- *      An object of type SVGPathElement to be flipped
- */
-function flipOnXAxis( aPath )
-{
-    var aPolyPath = aPath.cloneNode(true);
-    var aTransform = document.documentElement.createSVGMatrix();
-    aTransform.d = -1;
-    aTransform.f = 1;
-    aPolyPath.matrixTransform(aTransform);
-    return aPolyPath;
-}
 
 /** SVGPathElement.matrixTransform
  *  Apply the transformation defined by the passed matrix to the referenced
@@ -8814,7 +8771,7 @@ AnimatedElement.prototype.initElement = function()
 
     // add a transform attribute of type matrix
     this.aActiveElement.setAttribute( 'transform', makeMatrixString( 1, 0, 0, 1, 0, 0 ) );
-    this.aActiveElement.setAttribute( 'style', 'will-change:transform,opacity;' );
+    //this.aActiveElement.setAttribute( 'style', 'will-change:transform,opacity;' );
 };
 
 /** initClipPath
@@ -12499,7 +12456,7 @@ function evalValuesAttribute( aValueList, aValueSet, aBBox, nSlideWidth, nSlideH
         sValue = sValue.replace(reMath, 'Math.$&');
         sValue = sValue.replace(rePI, 'Math.PI');
         sValue = sValue.replace(reE, 'Math.E');
-        var aValue = (new Function( "x", "y", "return " + sValue )(x, y));
+        var aValue = (new Function( 'x', 'y', 'width', 'height', "return " + sValue )(x, y, width, height));
         aValueList.push( aValue );
     }
 }
